@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Eye Disease Prediction</title>
+</head>
+<body>
+    <h1>Upload Eye Image</h1>
+    <form id="uploadForm">
+        <input type="file" id="imageInput" name="image" accept="image/*" required />
+        <button type="submit">Predict</button>
+    </form>
+    <p id="result" style="font-weight: bold;"></p>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const fileInput = document.getElementById('imageInput');
+            const file = fileInput.files[0];
+
+            const formData = new FormData();
+            formData.append('image', file);
+
+            fetch('http://localhost:5000/predict/image', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Success:", data);
+                document.getElementById('result').innerText = 
+                    `Prediction: ${data.prediction}\nConfidence: ${data.confidence}`;
+            })
+            .catch(error => {
+                console.error("Fetch error:", error);
+                document.getElementById('result').innerText = "Error: " + error.message;
+            });
+        });
+    </script>
+</body>
+</html>
