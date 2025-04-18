@@ -1,46 +1,89 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Eye Disease Prediction</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Eye Disease Prediction</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+    #result { margin-top: 20px; padding: 10px; border: 1px solid #ccc; }
+    button { padding: 10px; cursor: pointer; }
+    .error { color: red; }
+    .loading { color: blue; }
+  </style>
 </head>
 <body>
-    <h1>Upload Eye Image</h1>
-    <form id="uploadForm">
-        <input type="file" id="imageInput" name="image" accept="image/*" required />
-        <button type="submit">Predict</button>
-    </form>
-    <p id="result" style="font-weight: bold;"></p>
+  <h1>Upload Retinal Image</h1>
+  <form id="uploadForm">
+    <input type="file" id="imageInput" name="image" accept="image/jpeg,image/png" required />
+    <button type="submit">Predict</button>
+  </form>
+  <div id="result"></div>
 
-    <script>
-        document.getElementById('uploadForm').addEventListener('submit', function (e) {
-            e.preventDefault();
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log("JavaScript Loaded");
 
-            const fileInput = document.getElementById('imageInput');
-            const file = fileInput.files[0];
+      const form = document.getElementById('uploadForm');
+      const resultDiv = document.getElementById('result');
 
-            const formData = new FormData();
-            formData.append('image', file);
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
 
-            fetch('http://localhost:5000/predict/image', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log("Success:", data);
-                document.getElementById('result').innerText = 
-                    `Prediction: ${data.prediction}\nConfidence: ${data.confidence}`;
-            })
-            .catch(error => {
-                console.error("Fetch error:", error);
-                document.getElementById('result').innerText = "Error: " + error.message;
-            });
+        const fileInput = document.getElementById('imageInput');
+        const file = fileInput.files[0];
+
+        if (!file) {
+          resultDiv.innerText = "Please select an image!";
+          resultDiv.className = "error";
+          return;
+        }
+
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+          resultDiv.innerText = "Please upload a valid image (JPEG or PNG)!";
+          resultDiv.className = "error";
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append('image', file);
+
+        console.log("Sending fetch request to http://127.0.0.1:5000/predict/image");
+        resultDiv.innerText = "Processing...";
+        resultDiv.className = "loading";
+
+        fetch('http://127.0.0.1:5000/predict/image', {
+          method: 'POST',
+          body: formData,
+        })
+        .then(response => {
+          console.log("Fetch response received:", response);
+          console.log("Fetch response status:", response.status); // Add this
+          console.log("Fetch response headers:", response.headers); // Add this
+          if (!response.ok) {
+            throw new Error(`Server error: ${response.status} ${response.statusText}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log("Parsed JSON data:", data);
+          if (data.error) {
+            resultDiv.innerText = `Error: ${data.error}`;
+            resultDiv.className = "error";
+            return;
+          }
+          resultDiv.innerText = `Prediction: ${data.prediction}\nConfidence: ${data.confidence}`;
+          resultDiv.className = "";
+        })
+        .catch(error => {
+          console.error("Fetch error details:", error); // Add this
+          console.error("Fetch error:", error);
+          resultDiv.innerText = `Error: ${error.message}`;
+          resultDiv.className = "error";
         });
-    </script>
+      });
+    });
+  </script>
 </body>
 </html>
