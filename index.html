@@ -1,46 +1,146 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Eye Disease Prediction</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Eye Disease Prediction</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #0c1b2a;
+      color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background-color: #142d4c;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 0 25px rgba(0, 0, 50, 0.4);
+      width: 400px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #00aaff;
+      margin-bottom: 20px;
+    }
+
+    input[type="file"] {
+      background-color: #0e2433;
+      border: 2px dashed #00aaff;
+      color: #ffffff;
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      width: 100%;
+      cursor: pointer;
+    }
+
+    button {
+      background-color: #00aaff;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #008fcc;
+    }
+
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #0e2433;
+      border-radius: 10px;
+      border-left: 5px solid #00aaff;
+      white-space: pre-line;
+    }
+
+    .error {
+      color: #ff4b5c;
+    }
+
+    .loading {
+      color: #ffaa00;
+    }
+  </style>
 </head>
 <body>
-    <h1>Upload Eye Image</h1>
+  <div class="container">
+    <h1>Eye Disease Predictor</h1>
     <form id="uploadForm">
-        <input type="file" id="imageInput" name="image" accept="image/*" required />
-        <button type="submit">Predict</button>
+      <input type="file" id="imageInput" name="image" accept="image/jpeg,image/png" required />
+      <br />
+      <button type="submit">Predict</button>
     </form>
-    <p id="result" style="font-weight: bold;"></p>
+    <div id="result"></div>
+  </div>
 
-    <script>
-        document.getElementById('uploadForm').addEventListener('submit', function (e) {
-            e.preventDefault();
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('uploadForm');
+      const resultDiv = document.getElementById('result');
 
-            const fileInput = document.getElementById('imageInput');
-            const file = fileInput.files[0];
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
 
-            const formData = new FormData();
-            formData.append('image', file);
+        const fileInput = document.getElementById('imageInput');
+        const file = fileInput.files[0];
 
-            fetch('http://localhost:5000/predict/image', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log("Success:", data);
-                document.getElementById('result').innerText = 
-                    `Prediction: ${data.prediction}\nConfidence: ${data.confidence}`;
-            })
-            .catch(error => {
-                console.error("Fetch error:", error);
-                document.getElementById('result').innerText = "Error: " + error.message;
-            });
+        if (!file) {
+          resultDiv.innerText = "Please select an image!";
+          resultDiv.className = "error";
+          return;
+        }
+
+        if (!file.type.startsWith('image/')) {
+          resultDiv.innerText = "Please upload a valid image (JPEG or PNG)!";
+          resultDiv.className = "error";
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append('image', file);
+
+        resultDiv.innerText = "Processing...";
+        resultDiv.className = "loading";
+
+        fetch('http://127.0.0.1:8000/predict/image', {
+          method: 'POST',
+          body: formData,
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Server error: ${response.status} ${response.statusText}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log("Response from backend:", data);  // Log the response for debugging
+          if (data.error) {
+            resultDiv.innerText = `Error: ${data.error}`;
+            resultDiv.className = "error";
+            return;
+          }
+          resultDiv.innerText = `Prediction: ${data.prediction}\nConfidence: ${data.confidence}`;
+          resultDiv.className = "";
+        })
+        .catch(error => {
+          resultDiv.innerText = `Error: ${error.message}`;
+          resultDiv.className = "error";
         });
-    </script>
+      });
+    });
+  </script>
 </body>
 </html>
