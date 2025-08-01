@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Netra-AI | Eye Disease Predictor</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #0c1b2a, #142d4c);
+      color: #ffffff;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      text-align: center;
+      padding: 40px;
+      background-color: #0e2433;
+      border-radius: 20px;
+      box-shadow: 0 0 30px rgba(0, 0, 50, 0.4);
+      width: 90%;
+      max-width: 600px;
+    }
+
+    h1 {
+      font-size: 3em;
+      color: #00aaff;
+      margin-bottom: 10px;
+      letter-spacing: 2px;
+    }
+
+    p {
+      font-size: 1.2em;
+      color: #cccccc;
+      margin-bottom: 40px;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      background-color: #00aaff;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-size: 1em;
+      cursor: pointer;
+      color: white;
+      text-decoration: none;
+      transition: 0.3s ease;
+      min-width: 160px;
+    }
+
+    .btn:hover {
+      background-color: #008fcc;
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 2em;
+      }
+      p {
+        font-size: 1em;
+      }
+      .btn {
+        padding: 12px 20px;
+        font-size: 0.95em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Netr-AI</h1>
+    <p>AI-powered Retinal Disease Detection Platform</p>
+    <div class="button-group">
+      <a href="index.html" class="btn">Check Disease</a>
+      <a href="learn.html" class="btn">Learn About Disease</a>
+    </div>
+  </div>
+  <!-- Animated Dots Background -->
+  <script>
+    const canvas = document.getElementById("bgCanvas");
+    const ctx = canvas.getContext("2d");
+
+    let width, height;
+    let particles = [];
+
+    function initCanvas() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+
+      particles = [];
+      for (let i = 0; i < 60; i++) {
+        particles.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          r: Math.random() * 2 + 1,
+          dx: (Math.random() - 0.5) * 0.3,
+          dy: (Math.random() - 0.5) * 0.3
+        });
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = "#00c3ff44";
+      particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+
+        p.x += p.dx;
+        p.y += p.dy;
+
+        if (p.x < 0 || p.x > width) p.dx *= -1;
+        if (p.y < 0 || p.y > height) p.dy *= -1;
+      });
+      requestAnimationFrame(animate);
+    }
+
+    window.addEventListener("resize", initCanvas);
+    initCanvas();
+    animate();
+  </script>
+</body>
+</html>

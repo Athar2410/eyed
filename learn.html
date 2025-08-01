@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Learn About Eye Diseases | Netr-AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #0c1b2a, #142d4c);
+      color: #ffffff;
+      margin: 0;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 850px;
+      margin: auto;
+      background-color: #0e2433;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 0 30px rgba(0, 0, 50, 0.3);
+    }
+
+    h1 {
+      text-align: center;
+      color: #00c3ff;
+      font-size: 2.8em;
+      margin-bottom: 30px;
+    }
+
+    .accordion {
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    .accordion button {
+      background-color: #112d45;
+      color: #00c3ff;
+      cursor: pointer;
+      padding: 18px 20px;
+      width: 100%;
+      text-align: left;
+      border: none;
+      outline: none;
+      transition: background-color 0.3s ease;
+      font-size: 1.1em;
+      border-radius: 10px;
+    }
+
+    .accordion button:hover {
+      background-color: #1a3e5d;
+    }
+
+    .panel {
+      padding: 0 20px;
+      background-color: #0e2c44;
+      display: none;
+      overflow: hidden;
+      color: #d1d1d1;
+      border-left: 3px solid #00c3ff;
+      border-radius: 0 0 10px 10px;
+      margin-top: -10px;
+    }
+
+    .panel p {
+      padding: 20px 0;
+      line-height: 1.6;
+    }
+
+    .back-btn {
+      display: inline-block;
+      margin-top: 30px;
+      background-color: #00c3ff;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background-color: #009acd;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2em;
+      }
+      .container {
+        padding: 25px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Learn About Eye Diseases</h1>
+
+    <div class="accordion">
+      <button>Diabetic Retinopathy</button>
+      <div class="panel">
+        <p>
+          Diabetic retinopathy is a complication of diabetes that affects the eyes. It occurs when high blood sugar levels damage the tiny blood vessels in the retina, leading to vision problems and, if untreated, even blindness.
+          Early stages may have no symptoms, making regular eye exams crucial for diabetic patients.
+        </p>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <button>Cataract</button>
+      <div class="panel">
+        <p>
+          A cataract is a clouding of the eye’s natural lens. It is the most common cause of vision loss in people over age 40. Symptoms include blurry vision, glare, and trouble seeing at night. Cataracts can be corrected with surgery.
+        </p>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <button>Glaucoma</button>
+      <div class="panel">
+        <p>
+          Glaucoma is a group of eye diseases that damage the optic nerve, usually due to high eye pressure. It causes gradual vision loss and often has no warning signs. Early detection through eye exams is vital. Treatment can include medication or surgery.
+        </p>
+      </div>
+    </div>
+
+    <a href="landing.html" class="back-btn">← Back to Home</a>
+  </div>
+
+  <script>
+    const accordions = document.querySelectorAll('.accordion button');
+
+    accordions.forEach(button => {
+      button.addEventListener('click', () => {
+        const panel = button.nextElementSibling;
+        const isOpen = panel.style.display === "block";
+
+        // Close all panels first
+        document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
+        
+        // Toggle the selected panel
+        if (!isOpen) {
+          panel.style.display = "block";
+        }
+      });
+    });
+  </script>
+  <!-- Animated Dots Background -->
+  <script>
+    const canvas = document.getElementById("bgCanvas");
+    const ctx = canvas.getContext("2d");
+
+    let width, height;
+    let particles = [];
+
+    function initCanvas() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+
+      particles = [];
+      for (let i = 0; i < 60; i++) {
+        particles.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          r: Math.random() * 2 + 1,
+          dx: (Math.random() - 0.5) * 0.3,
+          dy: (Math.random() - 0.5) * 0.3
+        });
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = "#00c3ff44";
+      particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+
+        p.x += p.dx;
+        p.y += p.dy;
+
+        if (p.x < 0 || p.x > width) p.dx *= -1;
+        if (p.y < 0 || p.y > height) p.dy *= -1;
+      });
+      requestAnimationFrame(animate);
+    }
+
+    window.addEventListener("resize", initCanvas);
+    initCanvas();
+    animate();
+  </script>
+</body>
+</html>
